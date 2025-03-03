@@ -1,0 +1,210 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: transparent;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+  }
+  
+  .header.scrolled {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .logoname {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px 0;
+    margin: 0;
+    outline: none;
+  }
+  
+  .logoname:hover {
+    opacity: 0.8;
+  }
+  
+  .loginButton {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px 0;
+    margin: 0;
+    outline: none;
+    margin-right: 1%;
+  }
+  
+  .cat {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 20px;
+    animation: catMove 10s infinite;
+    padding: 10px 0;
+  }
+  
+  .catHead {
+    position: absolute;
+    height: 20px;
+    width: 24px;
+    right: -5px;
+    top: -15px;
+    z-index: 50;
+  }
+  
+  .body {
+    position: absolute;
+    height: 15px;
+    width: 30px;
+  }
+  
+  .tail {
+    position: absolute;
+    top: -12.5px;
+    height: 18px;
+    width: 7.5px;
+    animation: tailMotion 2s infinite;
+    transform-origin: bottom right;
+  }
+  
+  .frontLegs,
+  .backLegs {
+    position: absolute;
+    height: 15px;
+  }
+  
+  .frontLegs {
+    width: 15px;
+    right: 0;
+  }
+  
+  .backLegs {
+    width: 12.5px;
+    left: 0;
+  }
+  
+  .leg {
+    position: absolute;
+    height: 10px;
+    width: 5px;
+    transform-origin: top center;
+  }
+  
+  .one,
+  .three {
+    bottom: -7.5px;
+    right: 0;
+  }
+  
+  .two,
+  .four {
+    bottom: -7.5px;
+    left: 0;
+  }
+  
+  .one,
+  .three {
+    animation: walk 0.3s infinite;
+  }
+  
+  .two,
+  .four {
+    animation: walkAlt 0.3s infinite;
+  }
+  
+  .catHead svg polygon,
+  .catHead svg path,
+  .body svg path,
+  .tail svg polygon,
+  .leg svg polygon {
+    fill: white;
+  }
+  
+  @keyframes catMove {
+    0% {
+      transform: translateX(0) translateY(-50%);
+    }
+    50% {
+      transform: translateX(calc(100vw - 100px)) translateY(-50%);
+    }
+    100% {
+      transform: translateX(0) translateY(-50%);
+    }
+  }
+  
+  @keyframes tailMotion {
+    0%,
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      transform: rotate(-50deg) scale(-1, 1);
+    }
+  }
+  
+  @keyframes walk {
+    0%,
+    100% {
+      transform: rotate(-10deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+  }
+  
+  @keyframes walkAlt {
+    0%,
+    100% {
+      transform: rotate(10deg);
+    }
+    50% {
+      transform: rotate(-10deg);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      padding: 8px 15px;
+    }
+  
+    .logoname,
+    .loginButton {
+      font-size: 16px;
+      padding: 8px 0;
+    }
+  
+    .cat {
+      width: 20px;
+      height: 15px;
+      padding: 8px 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .header {
+      padding: 5px 10px;
+    }
+  
+    .logoname,
+    .loginButton {
+      font-size: 14px;
+      padding: 5px 0;
+    }
+  
+    .cat {
+      width: 15px;
+      height: 10px;
+      padding: 5px 0;
+    }
+  }

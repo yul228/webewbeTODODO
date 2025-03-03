@@ -1,0 +1,92 @@
+.homepage {
+    background-image: url('/background.png');
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    position: relative;
+  }
+  
+  .content {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    position: relative; 
+  }
+  
+  .neonLine {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .neonLine path {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 50;
+    filter: drop-shadow(0 0 10px rgb(255, 16, 147)) 
+            drop-shadow(0 0 20px rgb(255, 16, 147)) 
+            drop-shadow(0 0 30px rgb(255, 16, 147)); 
+    animation: neon 10s linear infinite;
+  }
+  
+  @keyframes neon {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  .computerImage {
+    max-width: 100%;
+    height: auto;
+    padding: 80px;
+    margin: 35px;
+    transition: filter 0.5s ease, transform 0.5s ease;
+    animation: pulse 3s infinite;
+    position: relative; 
+    z-index: 2; 
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  
+  .ctaButton {
+    box-shadow: 0 5px 15px 0 rgb(237, 27, 121);
+    transition: 0.5s;
+    padding: 10px 20px;
+    background-color: #f60b9c;
+    color: white;
+    border: none;
+    border-radius: 13px;
+    cursor: pointer;
+    font-size: 20px;
+    width: auto;
+    margin: 0 auto;
+    position: relative; 
+    z-index: 2; 
+  }
+  
+  .ctaButton:hover {
+    transform: translate(0, -3px);
+    box-shadow: 0 20px 40px 0 rgb(248, 166, 240);
+  }

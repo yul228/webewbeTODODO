@@ -1,0 +1,115 @@
+.todo_panel_container {
+  background-color: white;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 100%;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.fields_container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field_container {
+  width: 100%;
+}
+
+.field_container label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.field_container input,
+.field_container textarea {
+  width: 100%;
+  padding: 12px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.field_container input:focus,
+.field_container textarea:focus {
+  border-color: rgb(237, 27, 121);
+  box-shadow: 0 0 0 3px rgba(237, 27, 121, 0.1);
+  outline: none;
+}
+
+.field_container textarea {
+  resize: vertical; /* Позволяет изменять высоту текстового поля */
+  min-height: 100px; /* Минимальная высота */
+}
+
+.button_container {
+  width: 100%;
+  text-align: right;
+  margin-top: 20px;
+}
+
+.button_container button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background-color: rgb(237, 27, 121);
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button_container button:hover {
+  background-color: rgb(200, 20, 100);
+  transform: translateY(-2px);
+}
+
+
+@media (max-width: 768px) {
+  .todo_panel_container {
+    padding: 20px;
+  }
+
+  .field_container input,
+  .field_container textarea {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .field_container textarea {
+    min-height: 80px;
+  }
+
+  .button_container button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .todo_panel_container {
+    padding: 15px;
+  }
+
+  .field_container input,
+  .field_container textarea {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .field_container textarea {
+    min-height: 60px;
+  }
+
+  .button_container button {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
