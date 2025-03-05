@@ -1,165 +1,194 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './TodoListPage.module.css';
 import Layout from '../../Layout/Layout';
 import { TodoList } from '../../TodoList/TodoList';
 import { TodoPanel } from '../../TodoPanel/TodoPanel';
-import { Todo, TodoList as TodoListType } from '../../../types/types';
+import { Todo, TodoListType } from '../../../types/types';
+import {
+  getTodoLists,
+  createTodoList,
+  deleteTodoList,
+  addTodoItem,
+  updateTodoItem,
+  deleteTodoItem
+} from '../../../constants/todo.service';
 
 const TodoListPage: React.FC = () => {
-  const [todoLists, setTodoLists] = useState<TodoListType[]>([
-    {
-      id: 1,
-      name: 'Работа',
-      todos: [
-        { id: 1, name: 'Задача 1', description: 'Описание 1', checked: false },
-        { id: 2, name: 'задача 2', description: 'Описание 2', checked: true },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Домашние дела',
-      todos: [
-        { id: 3, name: 'Задача 1', description: 'Описание 3', checked: false },
-      ],
-    },
-  ]);
+  const [spisochki, setSpisochki] = useState<TodoListType[]>([]);
+  const [idZadachkiDlyaRedaktirovaniya, setIdZadachkiDlyaRedaktirovaniya] = useState<number | null>(null);
+  const [pokazatDobavlenieZadachki, setPokazatDobavlenieZadachki] = useState<number | null>(null);
 
-  const [todoIdForEdit, setTodoIdForEdit] = useState<number | null>(null);
-  const [showAddTodoPanel, setShowAddTodoPanel] = useState<number | null>(null); // состояние для  тудупанелькт
+  useEffect(() => {
+    zagruzitSpisochki();
+  }, []);
 
-  const addTodoList = (name: string) => {
-    const newTodoList: TodoListType = {
-      id: Date.now(),
-      name,
-      todos: [],
-    };
-    setTodoLists([...todoLists, newTodoList]);
+  const zagruzitSpisochki = async () => {
+    try {
+      const dannye = await getTodoLists();
+      setSpisochki(dannye);
+    } catch (oshibochka) {
+      console.error('Ой, не получилось загрузить списки:', oshibochka);
+    }
   };
 
-  const deleteTodoList = (id: number) => {
-    setTodoLists(todoLists.filter((list) => list.id !== id));
+  const obrabotchikDobavleniyaSpisochnika = async (nazvanie: string) => {
+    try {
+      const noviySpisochek = await createTodoList(nazvanie);
+      setSpisochki([...spisochki, noviySpisochek]);
+    } catch (oshibochka) {
+      console.error('Не вышло создать спиоооочек:', oshibochka);
+    }
   };
 
-  const deleteTodo = (listId: number, todoId: number) => {
-    setTodoLists(
-      todoLists.map((list) =>
-        list.id === listId
-          ? { ...list, todos: list.todos.filter((todo) => todo.id !== todoId) }
-          : list
-      )
-    );
+  const obrabotchikUdalochkiSpisochnika = async (id: number) => {
+    try {
+      await deleteTodoList(id);
+      setSpisochki(spisochki.filter(spisochek => spisochek.id !== id));
+    } catch (oshibochka) {
+      console.error('Не удаляется наш спиоооочек:', oshibochka);
+    }
   };
 
-  const checkTodo = (listId: number, todoId: number) => {
-    setTodoLists(
-      todoLists.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              todos: list.todos.map((todo) =>
-                todo.id === todoId ? { ...todo, checked: !todo.checked } : todo
-              ),
+  const dobavitZadachku = async (spisochekId: number, zadachka: Omit<Todo, 'id' | 'checked'>) => {
+    try {
+      const novayaZadachka = await addTodoItem(spisochekId, zadachka.name, zadachka.description);
+      setSpisochki(spisochki.map(spisochek => 
+        spisochek.id === spisochekId 
+          ? { ...spisochek, todos: [...spisochek.todos, novayaZadachka] } 
+          : spisochek
+      ));
+      setPokazatDobavlenieZadachki(null);
+    } catch (oshibochka) {
+      console.error('Не добавилась задачка:', oshibochka);
+    }
+  };
+
+  const obrabotchikOtmetki = async (spisochekId: number, idZadachki: number) => {
+    try {
+      const zadachka = spisochki
+        .find(spisochek => spisochek.id === spisochekId)
+        ?.todos.find(z => z.id === idZadachki);
+  
+      if (zadachka) {
+        const obnovlennayaZadachka = await updateTodoItem(idZadachki, { 
+          checked: !zadachka.checked 
+        });
+        
+        setSpisochki(spisochki.map(spisochek => 
+          spisochek.id === spisochekId
+            ? {
+                ...spisochek,
+                todos: spisochek.todos.map(z =>
+                  z.id === idZadachki ? obnovlennayaZadachka : z
+                )
+              }
+            : spisochek
+        ));
+      }
+    } catch (oshibochka) {
+      console.error('Не обновилась задачка:', oshibochka);
+    }
+  };
+
+  const udalitZadachku = async (spisochekId: number, idZadachki: number) => {
+    try {
+      await deleteTodoItem(idZadachki);
+      setSpisochki(spisochki.map(spisochek =>
+        spisochek.id === spisochekId
+          ? { 
+              ...spisochek, 
+              todos: spisochek.todos.filter(z => z.id !== idZadachki) 
             }
-          : list
-      )
-    );
+          : spisochek
+      )); 
+    } catch (oshibochka) {
+      console.error('Не удалилась задачка:', oshibochka);
+    }
   };
 
-  const selectTodoIdForEdit = (id: number) => {
-    setTodoIdForEdit(id);
-  };
-
-  const changeTodo = (listId: number, { name, description }: Omit<Todo, 'id' | 'checked'>) => {
-    setTodoLists(
-      todoLists.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              todos: list.todos.map((todo) =>
-                todo.id === todoIdForEdit ? { ...todo, name, description } : todo
-              ),
-            }
-          : list
-      )
-    );
-    setTodoIdForEdit(null);
-  };
-
-  const addTodo = (listId: number, { name, description }: Omit<Todo, 'id' | 'checked'>) => {
-    setTodoLists(
-      todoLists.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              todos: [
-                ...list.todos,
-                { id: Date.now(), name, description, checked: false },
-              ],
-            }
-          : list
-      )
-    );
-    setShowAddTodoPanel(null); 
+  const izmenitZadachku = async (spisochekId: number, zadachka: Omit<Todo, 'id' | 'checked'>) => {
+    try {
+      if (idZadachkiDlyaRedaktirovaniya !== null) {
+        const obnovlennayaZadachka = await updateTodoItem(idZadachkiDlyaRedaktirovaniya, {
+          ...zadachka,
+          checked: false 
+        });
+        
+        setSpisochki(spisochki.map(spisochek =>
+          spisochek.id === spisochekId
+            ? {
+                ...spisochek,
+                todos: spisochek.todos.map(z =>
+                  z.id === idZadachkiDlyaRedaktirovaniya ? obnovlennayaZadachka : z
+                )
+              }
+            : spisochek
+        ));
+        setIdZadachkiDlyaRedaktirovaniya(null);
+      }
+    } catch (oshibochka) {
+      console.error('Не изменилась задачка:', oshibochka);
+    }
   };
 
   return (
-    <div className={styles.todoListPage}>
-      <Layout />
-      <div className={styles.content}>
-        <h1 className={styles.title}>Мой Todo Листочек</h1>
+    <Layout>
+      <div className={styles.todoListPage}>
+        <div className={styles.content}>
+          <h1 className={styles.title}>Мой Todo Листочек</h1>
 
-        <div className={styles.addTodoListForm}>
-          <input
-            type="text"
-            placeholder="Название списка"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                addTodoList(e.currentTarget.value);
-                e.currentTarget.value = '';
-              }
-            }}
-            className={styles.addTodoListInput}
-          />
-        </div>
-
-        {todoLists.map((todoList) => (
-          <div key={todoList.id} className={styles.todoListContainer}>
-            <div className={styles.todoListHeader}>
-              <h2 className={styles.todoListTitle}>{todoList.name}</h2>
-              <button
-                className={styles.deleteTodoListButton}
-                onClick={() => deleteTodoList(todoList.id)}
-              >
-                Удалить 
-              </button>
-              <button
-                className={styles.addTodoButton}
-                onClick={() => setShowAddTodoPanel(todoList.id)}
-              >
-                Добавить
-              </button>
-            </div>
-
-            {showAddTodoPanel === todoList.id && (
-              <TodoPanel
-                mode="add"
-                addTodo={(data) => addTodo(todoList.id, data)}
-              />
-            )}
-
-            <TodoList
-              todoIdForEdit={todoIdForEdit}
-              todos={todoList.todos}
-              deleteTodo={(id) => deleteTodo(todoList.id, id)}
-              checkTodo={(id) => checkTodo(todoList.id, id)}
-              selectTodoIdForEdit={selectTodoIdForEdit}
-              changeTodo={(data) => changeTodo(todoList.id, data)}
+          <div className={styles.addTodoListForm}>
+            <input
+              type="text"
+              placeholder="Как назовём списочек?"
+              onKeyDown={async (e) => {
+                if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                  await obrabotchikDobavleniyaSpisochnika(e.currentTarget.value);
+                  e.currentTarget.value = '';
+                }
+              }}
+              className={styles.addTodoListInput}
             />
           </div>
-        ))}
+
+          {spisochki.map((spisochek) => (
+            <div key={spisochek.id} className={styles.todoListContainer}>
+              <div className={styles.todoListHeader}>
+                <h2 className={styles.todoListTitle}>{spisochek.name}</h2>
+                <button
+                  className={styles.deleteTodoListButton}
+                  onClick={() => obrabotchikUdalochkiSpisochnika(spisochek.id)}
+                >
+                  Удалить
+                </button>
+                <button
+                  className={styles.addTodoButton}
+                  onClick={() => setPokazatDobavlenieZadachki(spisochek.id)}
+                >
+                  Добавить
+                </button>
+              </div>
+
+              {pokazatDobavlenieZadachki === spisochek.id && (
+                <TodoPanel
+                  mode="add"
+                  listId={spisochek.id}
+                  addTodo={(dannye) => dobavitZadachku(spisochek.id, dannye)}
+                />
+              )}
+              <TodoList
+                todoIdForEdit={idZadachkiDlyaRedaktirovaniya}
+                todos={spisochek.todos}
+                deleteTodo={(id) => udalitZadachku(spisochek.id, id)}
+                checkTodo={(id) => obrabotchikOtmetki(spisochek.id, id)}
+                selectTodoIdForEdit={setIdZadachkiDlyaRedaktirovaniya}
+                changeTodo={(dannye) => izmenitZadachku(spisochek.id, dannye)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-      <Layout />
-    </div>
+    </Layout>
   );
 };
 

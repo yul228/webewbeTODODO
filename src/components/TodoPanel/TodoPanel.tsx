@@ -2,31 +2,36 @@ import React from 'react';
 import styles from './TodoPanel.module.css';
 import { Todo } from '../../types/types';
 
-const DEFAULT_TODO = { name: '', description: '' };
+const DEFAULT_TODO = { name: '', description: '', todoListId: -1 };
 
 interface AddTodoPanelProps {
   mode: 'add';
-  addTodo: ({ name, description }: Omit<Todo, 'id' | 'checked'>) => void;
+  addTodo: (data: Omit<Todo, 'id' | 'checked'>) => void;
+  listId: number;
 }
 
 interface EditTodoPanelProps {
   mode: 'edit';
   editTodo: Omit<Todo, 'id' | 'checked'>;
-  changeTodo: ({ name, description }: Omit<Todo, 'id' | 'checked'>) => void;
+  changeTodo: (data: Omit<Todo, 'id' | 'checked'>) => void;
 }
 
 type TodoPanelProps = AddTodoPanelProps | EditTodoPanelProps;
 
 export const TodoPanel: React.FC<TodoPanelProps> = (props) => {
   const isEdit = props.mode === 'edit';
-  const [todo, setTodo] = React.useState(isEdit ? props.editTodo : DEFAULT_TODO);
+  const [todo, setTodo] = React.useState(
+    isEdit ? props.editTodo : { ...DEFAULT_TODO, todoListId: props.mode === 'add' ? props.listId : -1 }
+  );
 
   const onClick = () => {
     if (isEdit) {
-      return props.changeTodo(todo);
+      props.changeTodo(todo);
+    } else {
+      // todoListId при добавлении задачи
+      props.addTodo({ ...todo, todoListId: props.listId });
+      setTodo(DEFAULT_TODO);
     }
-    props.addTodo(todo);
-    setTodo(DEFAULT_TODO);
   };
 
   const onChange = (
@@ -74,7 +79,7 @@ export const TodoPanel: React.FC<TodoPanelProps> = (props) => {
         )}
         {isEdit && (
           <button onClick={onClick}>
-            Отредачить
+            Редактировать
           </button>
         )}
       </div>

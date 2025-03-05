@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import styles from './Header.module.css';
+import { RoutesEnum } from '../../constants/routes'; 
 
 const Header: React.FC = () => {
+  const navigate = useNavigate(); 
+
   useEffect(() => {
     const handleScroll = () => {
       const header = document.querySelector(`.${styles.header}`);
@@ -16,9 +20,14 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  
+  const handleLoginClick = () => {
+    navigate(RoutesEnum.Login); 
+  };
+
   return (
     <header className={styles.header}>
-      <div className={styles.logo} onClick={() => (window.location.href = '/')}>
+      <div className={styles.logo} onClick={() => navigate(RoutesEnum.Home)}>
         <button className={styles.logoname}>TodoChan</button>
         <div className={styles.cat}>
           <div className={styles.catHead}>
@@ -63,6 +72,9 @@ const Header: React.FC = () => {
           </div>
         </div>
       </div>
+      <button onClick={handleLoginClick} className={styles.link}>
+        Войти
+      </button>
     </header>
   );
 };

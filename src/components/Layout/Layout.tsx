@@ -1,16 +1,22 @@
-import React from 'react';
-import styles from './Layout.module.css'; 
-import Header from '../Haederochek/Header'
-import Footer from '../Footerochek/Footer'
+import React, { ReactNode } from 'react';
 
-const Layout: React.FC = () => {
-  return (
-    <><Header />
-    <div className={styles.containerLayout}>
+import Header from '../Haederochek/Header'; 
+import Footer from '../Footerochek/Footer'; 
 
-    </div>
-    <Footer /></>
-  );
+interface LayoutProps {
+    children: ReactNode; 
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+    return (
+        <>
+            <Header /> 
+            <main >
+                {children} 
+            </main>
+            <Footer />
+        </>
+    );
 };
 
 export default Layout;

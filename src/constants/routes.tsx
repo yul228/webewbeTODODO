@@ -1,7 +1,6 @@
 export enum RoutesEnum {
-	Home = '/',
-	Todolost = '/todolost',
-	Login = '/login',
-	Register = '/registration',
-
-}
+    Home = '/',
+    Todolist = '/todolist',
+    Login = '/login',
+    Register = '/registration',
+  }
