@@ -29,6 +29,7 @@ const Header: React.FC = () => {
     <header className={styles.header}>
       <div className={styles.logo} onClick={() => navigate(RoutesEnum.Home)}>
         <button className={styles.logoname}>TodoChan</button>
+        
         <div className={styles.cat}>
           <div className={styles.catHead}>
             <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 76.4 61.2">
@@ -72,9 +73,11 @@ const Header: React.FC = () => {
           </div>
         </div>
       </div>
+      
       <button onClick={handleLoginClick} className={styles.link}>
         Войти
       </button>
+      
     </header>
   );
 };
